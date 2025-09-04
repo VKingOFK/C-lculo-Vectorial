@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador de Vectores</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { display: flex; font-family: Arial, sans-serif; margin: 0; }
+        .left { flex: 2; padding: 20px; }
+        .right { flex: 1; padding: 20px; background: #f4f4f4; border-left: 2px solid #ccc; }
+        form { margin-top: 15px; }
+        input { width: 60px; margin: 5px; }
+        button { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        .card h3 { margin-top: 0; text-align: center; }
+    </style>
+</head>
+<body>
+    <!-- Sección izquierda: gráfica -->
+    <div class="left">
+        <h2>Gráfica de Vectores</h2>
+        <div id="grafica" style="width:100%; height:500px;"></div>
+    </div>
+
+    <!-- Sección derecha -->
+    <div class="right">
+        <h3>📌 Instrucciones</h3>
+        <p>
+            1. Ingresa los valores de <b>V1</b> y <b>V2</b>.<br>
+            2. Haz clic en <b>Generar</b>.<br>
+            3. Se mostrarán los vectores en la gráfica y sus operaciones en la tarjeta de resultados.
+        </p>
+
+        <!-- Formulario -->
+        <form method="POST">
+            <h4>Vector 1 (V1)</h4>
+            X:<input type="number" step="any" name="x1" required>
+            Y:<input type="number" step="any" name="y1" required>
+            Z:<input type="number" step="any" name="z1" required><br>
+
+            <h4>Vector 2 (V2)</h4>
+            X:<input type="number" step="any" name="x2" required>
+            Y:<input type="number" step="any" name="y2" required>
+            Z:<input type="number" step="any" name="z2" required><br>
+
+            <button type="submit">Generar</button>
+        </form>
+
+        <!-- Resultados -->
+        {% if resultados %}
+        <div class="card">
+            <h3>Resultados</h3>
+            <p>Magnitud de V1: {{ resultados.mag_v1 }}</p>
+            <p>Magnitud de V2: {{ resultados.mag_v2 }}</p>
+            <p>Suma: {{ resultados.suma }}</p>
+            <p>Resta: {{ resultados.resta }}</p>
+            <p>Producto Punto: {{ resultados.producto }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Gráfica con Plotly -->
+    <script>
+        var v1 = {{ v1 | tojson }};
+        var v2 = {{ v2 | tojson }};
+
+        var trace1 = {
+            type: 'scatter3d',
+            mode: 'lines+markers',
+            x: [0, v1.x], y: [0, v1.y], z: [0, v1.z],
+            line: { width: 6, color: 'blue' },
+            marker: { size: 5, color: 'red' },
+            name: "V1"
+        };
+
+        var trace2 = {
+            type: 'scatter3d',
+            mode: 'lines+markers',
+            x: [0, v2.x], y: [0, v2.y], z: [0, v2.z],
+            line: { width: 6, color: 'green' },
+            marker: { size: 5, color: 'orange' },
+            name: "V2"
+        };
+
+        var data = [trace1, trace2];
+        var layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis:{ title: 'X' },
+                yaxis:{ title: 'Y' },
+                zaxis:{ title: 'Z' }
+            }
+        };
+
+        Plotly.newPlot('grafica', data, layout);
+    </script>
+</body>
+</html>
